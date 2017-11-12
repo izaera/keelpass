@@ -5,24 +5,18 @@ import { createStore, applyMiddleware } from 'redux';
 import { createLogger } from 'redux-logger';
 import thunkMiddleware from 'redux-thunk';
 
-import { loadEntries } from '../actions';
-import App from './components/App';
+import AppContainer from './containers/AppContainer';
+import * as application from '../actions/application';
 import reducers from '../reducers';
 
 const store = createStore(
 	reducers,
-	applyMiddleware(thunkMiddleware /*, createLogger()*/),
+	applyMiddleware(thunkMiddleware, createLogger()),
 );
 
 ReactDOM.render(
 	<Provider store={store}>
-		<App />
+		<AppContainer />
 	</Provider>,
 	document.getElementById('root'),
 );
-
-store.dispatch(loadEntries());
-/**************************************/
-
-// var db = new Database('sample-keepass-db.kdbx');
-// db.open('password').then(() => ...);

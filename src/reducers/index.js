@@ -1,8 +1,11 @@
 import { combineReducers } from 'redux';
-import entries from './entries';
-import requests from './requests';
+
+import application from './application';
+import database from './database';
+import request from './request';
 
 export default combineReducers({
-	entries,
-	requests,
+	application,
+	database,
+	request,
 });

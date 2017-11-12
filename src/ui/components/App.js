@@ -5,14 +5,26 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import EntriesList from '../containers/EntriesList';
+import OpenDatabaseScreen from '../containers/OpenDatabaseScreen';
 
-export default () => {
-	return (
-		<div>
-			<Appbar />
-			<Container>
-				<EntriesList />
-			</Container>
-		</div>
-	);
+export default ({ state }) => {
+	switch (state) {
+		case 'closed':
+			return renderClosed();
+		case 'locked':
+			return renderLocked();
+		case 'unlocked':
+			return renderUnlocked();
+	}
 };
+
+const renderClosed = () => <OpenDatabaseScreen />;
+
+const renderLocked = () => <OpenDatabaseScreen />;
+
+const renderUnlocked = () => (
+	<div>
+		<Appbar />
+		<Container />
+	</div>
+);

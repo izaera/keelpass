@@ -22,12 +22,25 @@ class Database {
 	/**
  	 * @return a Promise which resolves to the Database when the file is open
 	 */
-	open(password) {
+	open(password, keyFile = undefined) {
+		let databaseBuffer, keyFileBuffer;
+
 		return readFile(this._path)
-			.then(data =>
+			.then(databaseData => (databaseBuffer = databaseData.buffer))
+			.then(() => (keyFile ? readFile(keyFile) : undefined))
+			.then(
+				keyFileData =>
+					(keyFileBuffer = keyFileData
+						? keyFileData.buffer
+						: undefined),
+			)
+			.then(() =>
 				Kdbx.load(
-					data.buffer,
-					new Credentials(ProtectedValue.fromString(password)),
+					databaseBuffer,
+					new Credentials(
+						ProtectedValue.fromString(password),
+						keyFileBuffer,
+					),
 				),
 			)
 			.then(db => {
@@ -155,13 +168,19 @@ class Database {
 
 class Entry {
 	static _fromDbEntry(dbEntry) {
+		let password = dbEntry.fields.Password;
+
+		if (typeof password !== 'string') {
+			password = password.getText();
+		}
+
 		return new Entry({
 			id: dbEntry.uuid,
 			title: dbEntry.fields.Title,
 			icon: dbEntry.icon,
 			url: dbEntry.fields.URL,
 			userName: dbEntry.fields.UserName,
-			password: dbEntry.fields.Password.getText(),
+			password: password,
 		});
 	}
 
